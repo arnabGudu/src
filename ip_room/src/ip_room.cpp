@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	Mat src, mask;
 	vector<vector<Point> > cnts;
 
-	VideoCapture cap(1);
+	VideoCapture cap(argv[1]);
 	
 	while(cap.isOpened())
 	{

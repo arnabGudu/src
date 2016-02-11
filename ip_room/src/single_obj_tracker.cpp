@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     // vector <string> trackerTypes(types, std::end(types));
  
     // Create a tracker
-    string trackerType = trackerTypes[2];
+    string trackerType = trackerTypes[1];
  
     Ptr<Tracker> tracker;
  
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
     }
     #endif
     // Read video
-    VideoCapture video(0);
+    VideoCapture video(argv[1]);
      
     // Exit if video is not opened
     if(!video.isOpened())
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     bool ok = video.read(frame); 
  
     // Define initial bounding box 
-    Rect2d bbox(287, 23, 86, 320); 
+    Rect2d bbox(0, 23, 150, 320); 
  
     // Uncomment the line below to select a different bounding box 
     // bbox = selectROI(frame, false); 
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
         imshow("Tracking", frame);
          
         // Exit if ESC pressed.
-        int k = waitKey(1);
+        int k = waitKey(40);
         if(k == 27)
         {
             break;

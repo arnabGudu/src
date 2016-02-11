@@ -107,7 +107,7 @@ int main(){
     //thresholded difference image (for use in findContours() function)
     Mat thresholdImage;
     //video capture object.
-    VideoCapture capture(0);
+    VideoCapture capture("~/room4.webm");
  
     while(1){
  

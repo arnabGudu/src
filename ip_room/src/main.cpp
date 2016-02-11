@@ -10,7 +10,7 @@ int ht = 0;
 
 int main(int argc, char** argv)
 {
-	VideoCapture cap(0);
+	VideoCapture cap(argv[1]);
 
 	Mat src, gray;
 	vector< Rect >loc;

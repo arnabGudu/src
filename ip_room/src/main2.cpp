@@ -9,7 +9,7 @@ int main( int argc, const char** argv )
 {
 
     /// Create a videoreader interface
-    VideoCapture cap(0);
+    VideoCapture cap(argv[1]);
     Mat current_frame;
 
     /// Set up the pedestrian detector --> let us take the default one

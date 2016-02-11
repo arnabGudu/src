@@ -28,7 +28,7 @@ void draw_locations(Mat & img, const vector< Rect > & locations, const Scalar & 
 int main(int argc, char** argv) {
 
 	Mat img, gray,draw;
-	VideoCapture capture(0);
+	VideoCapture capture(argv[1]);
 	Scalar reference(0, 255, 0);
 	HOGDescriptor hog;
 	vector< Rect > locations;
