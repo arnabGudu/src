@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <iostream>
+#include "ui_mainwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -12,17 +13,35 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit MainWindow(ros::NodeHandle _nh,QWidget *parent = 0);
-    ~MainWindow();
-    void callback(const std_msgs::Int32::ConstPtr& msg);
+	explicit MainWindow(QWidget *parent = 0);
+	~MainWindow();
+	void plot(float input);
 
 private:
-    Ui::MainWindow *ui;
-    ros::NodeHandle nh;
-    ros::Subscriber sub;
+	Ui::MainWindow *ui;
 };
+
+
+///////////////////////functions/////////////////////////////
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+	ui->setupUi(this);
+}
+
+MainWindow::~MainWindow()
+{
+	delete ui;
+}
+
+void MainWindow::plot(float input)
+{
+	ui->lcd->display(input);
+}
 
 #endif // MAINWINDOW_H

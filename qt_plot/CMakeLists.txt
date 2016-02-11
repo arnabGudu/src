@@ -16,7 +16,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ################################################
 file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 set(QT_MOC include/mainwindow.h)
-SET(QT_SOURCES src/mainwindow.cpp)
 
 ################################################
 ## Setup QT
@@ -39,7 +38,7 @@ include_directories(
 	${QT_INCLUDE_DIRS}
 )
 
-add_library(plotLib ${QT_SOURCES} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+add_library(plotLib ${QT_FORMS_HPP} ${QT_MOC_HPP})
 target_link_libraries(plotLib ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 add_executable(plot src/main.cpp)
