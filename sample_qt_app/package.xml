@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <name>sample_qt_app</name>
+  <version>0.0.0</version>
+  <description>A sample qt app to help newer members</description>
+  <maintainer email="rohitsuri.nitr@gmail.com">Rohit Suri</maintainer>
+  <license>BSD</license>
+  <author email="rohitsuri.nitr@gmail.com">Rohit Suri</author>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>qt_build</build_depend>
+  <build_depend>roscpp</build_depend>
+  <run_depend>qt_build</run_depend>
+  <run_depend>roscpp</run_depend>
+</package>
