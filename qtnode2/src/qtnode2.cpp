@@ -1,6 +1,8 @@
 #include "qtnode2.h"
 #include "ui_mainwindow.h"
 
+cv::Mat src1;
+
 MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), it(_nh)
 {
 	ui->setupUi(this);
@@ -38,12 +40,14 @@ MainWindow::~MainWindow()
 void MainWindow::node1Callback(const sensor_msgs::ImageConstPtr& msg1)
 {
 	src = cv_bridge::toCvShare(msg1, "bgr8")->image;
-	
-	QPixmap p = QPixmap::fromImage(QImage((unsigned char*) src.data, src.cols, src.rows, QImage::Format_RGB888));
+	src1 = src.clone();
+	cv::cvtColor(src, src, CV_BGR2RGB);
+	QPixmap p = QPixmap::fromImage(QImage((unsigned char*) src.data, src.cols, src.rows, src.step, QImage::Format_RGB888));
 	p = p.scaledToWidth(500);
 	
 	ui->label_node1->setPixmap(p);
 
+	
 	display();
 	publish();
 }
@@ -57,19 +61,21 @@ void MainWindow::publish()
 void MainWindow::perform()
 {
 	cv::Mat hsv, blr;
-
-	cv::cvtColor(src, hsv, CV_BGR2HSV);
-	thres = hsv;
+	cv::cvtColor(src1, hsv, CV_BGR2HSV);
+	//thres = hsv;
 	//cv::blur(hsv, blr, cv::Size(15,15));
-	cv::inRange(hsv, cv::Scalar(mh,ms,mv), cv::Scalar(Mh,Ms,Mv), thres);
+	//cv::inRange(hsv, cv::Scalar(mh,ms,mv), cv::Scalar(Mh,Ms,Mv), thres);
+	//cv::namedWindow("view");	
+	cv::imshow("view", hsv);
+	//cv::cvtColor(thres, thres, CV_GRAY2BGR);
 }
 
 void MainWindow::display()
 {
 	perform();
 
-	QPixmap p = QPixmap::fromImage(QImage((unsigned char*) thres.data, thres.cols, thres.rows, QImage::Format_MonoLSB));
-	//p = p.scaledToWidth(500);
+	QPixmap p = QPixmap::fromImage(QImage((unsigned char*) thres.data, thres.cols, thres.rows, thres.step, QImage::Format_Mono));
+	p = p.scaledToWidth(500);
 	ui->label_node2->setPixmap(p);
 } 
 
