@@ -3,9 +3,11 @@
 
 cv::Mat src1;
 
-MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), it(_nh)
+MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), nh(_nh), it(_nh)
 {
 	ui->setupUi(this);
+	state = 1;
+	subPow = nh.subscribe("power", 1000, &MainWindow::node3Callback, this); 
 	sub = it.subscribe("camera/image1", 1, &MainWindow::node1Callback, this);
 	pub = it.advertise("camera/image2", 1);	
 	
@@ -15,13 +17,21 @@ MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) : QMainWindow(paren
 
 void MainWindow::sliderSetup()
 {
-	//ui->hs_mh->setValue(mh);
-	//ui->hs_ms->setValue(ms);
-	//ui->hs_mv->setValue(mv);
+	mh = 0;
+	ms = 0;
+	mv = 0;
+	
+	Mh = 255;
+	Ms = 255;
+	Mv = 255;
 
-	//ui->hs_Mh->setValue(Mh);
-	//ui->hs_Ms->setValue(Ms);
-	//ui->hs_Mv->setValue(Mv);
+	ui->hs_mh->setValue(mh);
+	ui->hs_ms->setValue(ms);
+	ui->hs_mv->setValue(mv);
+
+	ui->hs_Mh->setValue(Mh);
+	ui->hs_Ms->setValue(Ms);
+	ui->hs_Mv->setValue(Mv);
 
 	connect(ui->hs_mh, SIGNAL(valueChanged(int)), this, SLOT(hs_mH(int)));
 	connect(ui->hs_ms, SIGNAL(valueChanged(int)), this, SLOT(hs_mS(int)));
@@ -37,12 +47,17 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+
+void MainWindow::node3Callback(const std_msgs::Int32::ConstPtr& _msgPow)
+{
+	state = _msgPow->data;
+}
+
 void MainWindow::node1Callback(const sensor_msgs::ImageConstPtr& msg1)
 {
-	src = cv_bridge::toCvShare(msg1, "bgr8")->image;
-
-	if (!src.empty())
+	if (state)
 	{
+		src = cv_bridge::toCvShare(msg1, "bgr8")->image;
 		perform();
 
 		cv::cvtColor(src, src, CV_BGR2RGB);

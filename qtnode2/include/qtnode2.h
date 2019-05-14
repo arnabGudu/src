@@ -6,6 +6,7 @@
 #include "opencv2/opencv.hpp"
 #include "image_transport/image_transport.h"
 #include "cv_bridge/cv_bridge.h"
+#include "std_msgs/Int32.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,7 @@ public:
 	~MainWindow();
 
 	void node1Callback(const sensor_msgs::ImageConstPtr& msg);
+	void node3Callback(const std_msgs::Int32::ConstPtr& _msgPow);
 
 public slots:
 	void hs_mH(int v);
@@ -32,6 +34,10 @@ public slots:
 
 private:
 	Ui::MainWindow *ui;
+
+	ros::NodeHandle nh;
+	ros::Subscriber subPow;
+	int state;
 	
 	image_transport::ImageTransport it;
 

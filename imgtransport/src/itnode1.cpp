@@ -62,17 +62,23 @@ int main(int argc, char **argv)
 	VideoCapture cap(0);
 	ros::Rate r(10);
 	
-	while(ros::ok() && cap.isOpened())
+	while(ros::ok())
 	{	
-		cap >> n.src;
-		
-		if (n.src.empty())
-			break;
-
 		if (!n.ok())
-			break;
-
-		n.publish();
+		{	
+			cap.release();
+		}
+		else if (n.ok() && !cap.isOpened())
+		{
+			cap.open(0);
+		}
+		if (n.ok() && cap.isOpened())
+		{
+			cap >> n.src;
+			if (n.src.empty())
+				break;
+			n.publish();
+		}
 		ros::spinOnce();
 		r.sleep();
 	}
