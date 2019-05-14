@@ -22,8 +22,7 @@ public:
 	{
 		msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", src).toImageMsg();
 		
-		if(ok())
-			pub.publish(msg);
+		pub.publish(msg);
 		
 		std::cout<<state<<std::endl;
 		waitKey(10);
@@ -68,6 +67,9 @@ int main(int argc, char **argv)
 		cap >> n.src;
 		
 		if (n.src.empty())
+			break;
+
+		if (!n.ok())
 			break;
 
 		n.publish();
