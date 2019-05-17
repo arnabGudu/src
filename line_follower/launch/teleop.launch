@@ -1,0 +1,4 @@
+<launch>
+  <remap from="cmd_vel" to="qt_pi/cmd_vel"/>
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" respawn="false" name="qt_pi_line_follower_teleop" output="screen"></node>
+</launch>

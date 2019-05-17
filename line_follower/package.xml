@@ -1,0 +1,10 @@
+<package format="2">
+  <name>qt_pi_line_follower</name>
+  <version>0.0.0</version>
+  <description>The qt_pi_line_follower package</description>
+  <maintainer email="rishabh_kundu@rediffmail.com">Rishabh Kundu</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <export>
+  </export>
+</package>
