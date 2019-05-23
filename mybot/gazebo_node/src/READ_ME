@@ -1,0 +1,17 @@
+*raw_image_cap :- it captures the image from the gazebo and displays that in a window
+		sub :- /mybot/camera1/image_raw
+
+*img_pro_cal :- it does the image processing part and send the area of the contour for the part of motion calculations
+		sub :- /mybot/camera1/image_raw
+		pub :- /pro_img,/centre_coordinates (can change this to Combined.msg)
+
+*HSV_track_bar :- You give it any topic it will give you HSV filtering GUI capacities
+		sub:- the topic you wish (RGB image)
+
+*motion_pub:- It publishes the motion for the bot so that it is at a particular distance from the object
+			  according to the certain threshold with respect to the biggest area of the contour. and turns
+			  with respect to the centre_coordinates
+		sub:- /pro_img,/centre_coordinates
+		pub:- /cmd_vel
+
+img_pro_cal2 anf motion_pun2 is to be modified for custom msg package
