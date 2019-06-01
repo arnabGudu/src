@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	Node1 n(nh);
 	//Mat image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
 	
-	VideoCapture cap(0);
+	VideoCapture cap(argv[1]);
 	ros::Rate r(10);
 	
 	while(ros::ok())
