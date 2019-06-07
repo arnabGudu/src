@@ -18,12 +18,12 @@ void cmd_vel::callbackPid(const gazebo_ipbot::pid::ConstPtr& _msg)
 
 	int angle = _msg->angular.data;
 	int diffAng = angle - lastAngle;
-	balance += (float)(akp * angle + akd * diffAng) / 1000;
+	//balance += (float)(akp * angle + akd * diffAng) / 1000;
 
 	cout<<"bal"<<balance<<endl;
 
 	msg.angular.z = balance;
-	msg.linear.x = (float)(vel - akp * angle) / 1000;
+	msg.linear.x = (float)vel/1000;//(float)(vel - akp * angle) / 1000;
 	pub.publish(msg);
 }
 
