@@ -25,7 +25,7 @@ private:
 	ros::Subscriber subPid;
 	geometry_msgs::Twist msg;
 
-	float lastError, lastAngle;
+	float lastError, lastAngle, integral;
 	int lkp, lki, lkd, akp, akd, aki, vel;
 };
 

@@ -65,8 +65,8 @@ void image::tuning()
 void image::pidTrackbar()
 {
 	namedWindow("src");
-	//createTrackbar("ht", "src", &ht, 487, NULL);
-	//createTrackbar("wd", "src", &wd, 487, NULL);
+	createTrackbar("ht", "src", &ht, 487, NULL);
+	createTrackbar("wd", "src", &wd, 487, NULL);
 
 	createTrackbar("vel", "src", &vel, 1000, NULL);
 	createTrackbar("lkp", "src", &lkp, 1000, NULL);

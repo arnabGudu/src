@@ -32,12 +32,14 @@ private:
 	int ht, wd;
 	int lkp, lkd, lki, vel;
 	int akp, akd, aki;
+	int index;
 
 	void trackbar();
 	void pidTrackbar();
 	void show();
 	void perform();
 	void tuning();
+	void error_calc(int input);	//only for img_cap_ard
 };
 
 #endif

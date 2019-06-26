@@ -3,6 +3,7 @@
 cmd_vel::cmd_vel(ros::NodeHandle _nh) : nh(_nh)
 {
 	lastError = 0, lastAngle = 0;
+	integral = 0;
 
 	pub = nh.advertise<geometry_msgs::Twist>("qt_pi/cmd_vel", 1000);
 	subPid = nh.subscribe("pid", 1000, &cmd_vel::callbackPid, this);
@@ -11,9 +12,20 @@ cmd_vel::cmd_vel(ros::NodeHandle _nh) : nh(_nh)
 
 void cmd_vel::callbackPid(const gazebo_ipbot::pid::ConstPtr& _msg)
 {
+	int max_control, min_control;
+
 	int error = _msg->linear.data;
-	int diff  = error - lastError;
-	float balance = (float)(lkp * error + lkd * diff) / 1000;
+
+	integral += error;
+	if (integral >= max_control)
+		integral = max_control;
+	else if (integral <= min_control)
+		integral = min_control;
+
+	int derivative = error - lastError;
+	
+	float balance = (float)(lkp * error + lkd * derivative + lki * integral) / 1000;
+	
 	lastError = error;
 
 	int angle = _msg->angular.data;
