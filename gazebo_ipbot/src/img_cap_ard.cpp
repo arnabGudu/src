@@ -56,7 +56,7 @@ void image::pidTrackbar()
 {
 	namedWindow("src");
 	createTrackbar("vel", "src", &vel, 1000, NULL);
-	createTrackbar("kp", "src", &lkp, 1000, NULL);
+	createTrackbar("kp", "src", &lkp, 5000, NULL);
 	createTrackbar("kd", "src", &lkd, 1000, NULL);
 	createTrackbar("ki", "src", &lki, 1000, NULL);
 }
@@ -75,22 +75,14 @@ void image::perform()
 		rectangle(src, sensorRect, Scalar(0,0,255), 2);
 
 		int count = countNonZero(thres(sensorRect));
-		if (count > 500)
+		cout<<count<<"\t";
+		if (count < 700)
 			input = input | 1 << i;
 		else
 			input = input | 0 << i;		
 	}	
 	
 	int current[5] = {0b110011, 0b000111, 0, 0b111000, 0b001100};
-	
-	/*
-	if (input ^ current[index] == 0b111111)
-		current = current * -1;
-	else if (input ^ current == 0b110100)
-		current = 2 / current;
-	else if (input ^ current == 0b001011)
-		current = -2 / current;	
-	*/
 
 	switch (input ^ current[index])
 	{
@@ -102,7 +94,7 @@ void image::perform()
 			index = (-2 / (index - 2)) + 2;	break;		
 	}
 	
-	cout<<index<<"\t";
+	cout<<"\ninp "<<input<<"\tindx "<<index<<"\t";
 	error_calc(input ^ current[index]);	
 
 	tuning();

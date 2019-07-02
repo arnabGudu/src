@@ -26,7 +26,7 @@ private:
 	geometry_msgs::Twist msg;
 
 	float lastError, lastAngle, integral;
-	int lkp, lki, lkd, akp, akd, aki, vel;
+	float lkp, lki, lkd, akp, akd, aki, vel;
 };
 
 #endif

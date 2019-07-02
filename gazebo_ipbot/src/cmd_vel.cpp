@@ -24,28 +24,28 @@ void cmd_vel::callbackPid(const gazebo_ipbot::pid::ConstPtr& _msg)
 
 	int derivative = error - lastError;
 	
-	float balance = (float)(lkp * error + lkd * derivative + lki * integral) / 1000;
+	float balance = lkp * error + lkd * derivative + lki * integral;
 	
 	lastError = error;
 
-	int angle = _msg->angular.data;
-	int diffAng = angle - lastAngle;
-	//balance += (float)(akp * angle + akd * diffAng) / 1000;
+	//int angle = _msg->angular.data;
+	//int diffAng = angle - lastAngle;
+	//balance += (akp * angle + akd * diffAng);
 
-	cout<<"bal"<<balance<<endl;
+	printf("kp %f\tki %f\tkd %f\n", lkp, lki, lkd);
 
 	msg.angular.z = balance;
-	msg.linear.x = (float)vel/1000;//(float)(vel - akp * angle) / 1000;
+	msg.linear.x = vel;//(float)(vel - akp * angle) / 1000;
 	pub.publish(msg);
 }
 
 void cmd_vel::callbackTuning(const gazebo_ipbot::tuning::ConstPtr& _msg)
 {
-	lkp = _msg->lkp.data;
-	lkd = _msg->lkd.data;
-	lki = _msg->lki.data;
-	akp = _msg->akp.data;
-	akd = _msg->akd.data;
-	aki = _msg->aki.data;
-	vel = _msg->vel.data;
+	lkp = (float)_msg->lkp.data / 1000;
+	lkd = (float)_msg->lkd.data / 1000;
+	lki = (float)_msg->lki.data / 1000;
+	akp = (float)_msg->akp.data / 1000;
+	akd = (float)_msg->akd.data / 1000;
+	aki = (float)_msg->aki.data / 1000;
+	vel = (float)_msg->vel.data / 1000;
 }
