@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(imgtransport)
 
 find_package(catkin REQUIRED COMPONENTS
-  OpenCV
   cv_bridge
   image_transport
   roscpp

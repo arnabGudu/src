@@ -6,12 +6,15 @@ using namespace std;
 using namespace cv;
 
 Mat src; 
-int thresh_dist = 150, y_1 = 0, x_1 = 0, x_2 = 0, y_2 = 0;
-int canny_thresh = 46;
+int thresh_dist = 50;	//150
+int canny_thresh = 19;	//46
+int times = 2;		//2
+int thresh_thresh = 15;	//30
 
-float k = 2.0;
-int times = 2;
-int thresh_thresh = 30;
+int y_1 = 0, x_1 = 0, x_2 = 0, y_2 = 0;
+
+
+float k = 1.0;
 
 bool find_dist(vector<Point> cnt1, vector<Point> cnt2)
 {
@@ -52,7 +55,14 @@ int main(int argc, char** argv)
 
 	Mat gray, frameDelta, thresh, firstFrame;
 
-	VideoCapture cap(argv[1]);
+	VideoCapture cap;
+
+	if (argc >= 2)
+		cap.open(argv[1]);
+	else
+		cap.open(0);
+
+	cout<<argc<<endl;
 
 	int frame_width = cap.get(CV_CAP_PROP_FRAME_WIDTH); 
 	int frame_height = cap.get(CV_CAP_PROP_FRAME_HEIGHT); 
@@ -143,7 +153,6 @@ int main(int argc, char** argv)
 
 		vector<vector<Point> > contours(max);
 
-		//cvtColor(thresh, src, COLOR_GRAy_2BGR);
 		for (int i = 0; i < max; i++)
 		{
 			for (int j = 0; j < length; j++)
@@ -152,8 +161,8 @@ int main(int argc, char** argv)
 					
 			Rect boundRect = boundingRect(contours[i]);
 
-			if (float(boundRect.height)/float(boundRect.width) < 1)
-				continue;
+			/*if (float(boundRect.height)/float(boundRect.width) < 1)
+				continue;*/
 
 			rectangle(src, boundRect, Scalar(255, 0, 0), 2);
 			
@@ -200,20 +209,20 @@ int main(int argc, char** argv)
 			count++;
 			*/			
 		}
-					
+		/*			
 		line(src, Point(000*k,184*k), Point(640*k,275*k), Scalar(0,0,255), 2);
 		line(src, Point(000*k,138*k), Point(322*k,117*k), Scalar(0,0,255), 2);
 		line(src, Point(322*k,117*k), Point(640*k,146*k), Scalar(0,0,255), 2);
 
 		line(src, Point(000*k,288*k), Point(322*k,117*k), Scalar(255,0,255), 2);
 		
-		line(src, Point(x_1,y_1), Point(x_2,y_2), Scalar(255,114,255), 2);
+		line(src, Point(x_1,y_1), Point(x_2,y_2), Scalar(255,114,255), 2);*/
 		
 
 		imshow("src", src);
 		//imshow("gray", gray);
 		imshow("thresh", thresh);
-		video.write(src);
+		//video.write(src);
 		waitKey(40);
 		
 	}

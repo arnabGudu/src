@@ -4,7 +4,6 @@ project(qtnode3)
 find_package(catkin REQUIRED COMPONENTS
   qt_build
   roscpp
-  OpenCV
   cv_bridge
   image_transport
   roslib

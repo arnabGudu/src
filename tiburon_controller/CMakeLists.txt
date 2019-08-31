@@ -1,9 +1,22 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(qt_plot)
+project(tiburon_controller)
 
 find_package(catkin REQUIRED COMPONENTS
+  genmsg
   qt_build
   roscpp
+  roslib	#required to use ros::package::getpath();
+  #message_generation
+)
+
+add_message_files(
+  FILES
+  pid_tuning.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -16,6 +29,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ################################################
 file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 set(QT_MOC include/mainwindow.h)
+SET(QT_SOURCES src/mainwindow.cpp)
 
 ################################################
 ## Setup QT
@@ -27,7 +41,10 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 ###################################
 ## catkin specific configuration ##
 ###################################
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS message_runtime
+)
+
 
 ###########
 ## Build ##
@@ -35,11 +52,15 @@ catkin_package()
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
-	${QT_INCLUDE_DIRS}
+  ${QT_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_library(plotLib ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(plotLib ${QT_LIBRARIES} ${catkin_LIBRARIES})
+add_library(appLib ${QT_SOURCES} ${QT_FORMS_HPP} ${QT_MOC_HPP})
+target_link_libraries(appLib ${QT_LIBRARIES} ${catkin_LIBRARIES})
+add_dependencies(appLib ${PROJECT_NAME}_generate_messages_cpp)
 
-add_executable(plot src/main.cpp)
-target_link_libraries(plot appLib)
+add_executable(app src/main.cpp)
+target_link_libraries(app appLib)
+
+

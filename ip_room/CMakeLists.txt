@@ -3,7 +3,6 @@ project(ip_room)
 
 
 find_package(catkin REQUIRED COMPONENTS
-  OpenCV
   roscpp
 )
 
