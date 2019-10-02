@@ -29,7 +29,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ################################################
 file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 set(QT_MOC include/mainwindow.h)
-SET(QT_SOURCES src/mainwindow.cpp)
+SET(QT_SOURCES src/mainwindow.cpp src/array.cpp)
 
 ################################################
 ## Setup QT
@@ -43,7 +43,7 @@ QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
 ###################################
 catkin_package(
   CATKIN_DEPENDS message_runtime
-)
+) 
 
 
 ###########

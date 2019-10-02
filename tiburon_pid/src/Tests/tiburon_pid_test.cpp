@@ -53,9 +53,9 @@ void pid::callback_key(const std_msgs::String::ConstPtr &msg)
 
 void pid::callback_pid(const tiburon_controller::pid_tuning::ConstPtr &msg)
 {
-	kp[0] = (msg->kp * 1.0) / 100;
-	kd[0] = (msg->kd * 1.0) / 100;
-	ki[0] = (msg->ki * 1.0) / 100;
+	kp[0] = (msg->kp[0] * 1.0) / 100;
+	kd[0] = (msg->kd[0] * 1.0) / 100;
+	ki[0] = (msg->ki[0] * 1.0) / 100;
 }
 
 ///////////////////////////////////////////////////////////////////

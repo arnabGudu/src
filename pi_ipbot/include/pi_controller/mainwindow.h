@@ -8,10 +8,9 @@
 #include <std_msgs/String.h>
 #include <iostream>
 #include <QKeyEvent>
-#include "tiburon_controller/pid_tuning.h"
+#include "pi_ipbot/pid_pi.h"
 
-#include <QSlider>
-#include <QLabel>
+#define max_index 2
 
 using namespace std;
 
@@ -28,26 +27,26 @@ public:
     ~MainWindow();
 
 public slots:
-    void Slider(void);
+    void slider(void);
     void save();
-    void load();
+    void index_changed(void);
 
 private:
     Ui::MainWindow *ui;
     ros::NodeHandle nh;
     ros::Publisher pub_pid, pub_key;
-    tiburon_controller::pid_tuning msg_pid;
+    pi_ipbot::pid_pi msg_pid;
     string config_name;
+	
+    int index, kp[max_index], kd[max_index], ki[max_index], vel;
+    bool index_changed_flag;
 
-    bool isLoading;
-    QSlider * slider[4][4][2];
-    QLabel * value[4][4];
-
-	void defineArray();
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
-    void load_slider();
     void setLabels();
+    void publish_pid();
+    void load();
+    void print();
 };
 
 #endif // MAINWINDOW_H

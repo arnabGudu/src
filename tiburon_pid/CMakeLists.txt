@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   synchronizer
   std_msgs
-  thruster_controller
+  thruster_controller 
   tiburon_controller
   genmsg
 )
@@ -22,12 +22,12 @@ add_library(pid_lib include/tiburon_pid.h src/tiburon_pid.cpp)
 add_executable( pid src/main.cpp)
 target_link_libraries(pid pid_lib ${catkin_LIBRARIES} )
 
-add_library(pid_test_lib include/tiburon_pid.h src/tiburon_pid_test.cpp)
+add_library(pid_test_lib include/tiburon_pid.h src/Tests/tiburon_pid_test.cpp)
 add_executable( pid_test src/main.cpp)
 target_link_libraries(pid_test pid_test_lib ${catkin_LIBRARIES} )
 
-add_executable( pid_cmd src/tiburon_pid_cmd.cpp)
+add_executable( pid_cmd src/Tests/tiburon_pid_cmd.cpp)
 target_link_libraries(pid_cmd ${catkin_LIBRARIES} )
 
-add_executable( pid_test1 src/tiburon_pid_test1.cpp)
+add_executable( pid_test1 src/Tests/tiburon_pid_test1.cpp)
 target_link_libraries(pid_test1 ${catkin_LIBRARIES} )

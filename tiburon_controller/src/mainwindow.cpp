@@ -9,39 +9,30 @@ MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) :
 	pub_key = nh.advertise<std_msgs::String>("key", 1);
 	pub_pid = nh.advertise<tiburon_controller::pid_tuning>("pid", 10);
 
-	ui->comboBox->insertItem(0, "ROLL");
-	ui->comboBox->insertItem(1, "PITCH");
-	ui->comboBox->insertItem(2, "YAW");
-	ui->comboBox->insertItem(3, "DEPTH"); 	
-
-	connect(ui->hs_kp, SIGNAL(valueChanged(int)), SLOT(slider(void)));
-    connect(ui->hs_ki, SIGNAL(valueChanged(int)), SLOT(slider(void)));
-    connect(ui->hs_kd, SIGNAL(valueChanged(int)), SLOT(slider(void)));
-	connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), SLOT(index_changed(void)));
-	connect(ui->pushButton, SIGNAL(pressed()), this, SLOT(save()));	
-	
-	index = 0;
-	index_changed_flag = false;
+	defineArray();
 	for (int i = 0; i < 4; i++)
 	{
-		kp[i] = 0;
-		kd[i] = 0;
-		ki[i] = 0;
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 2; k++)
+			{
+				connect(slider[i][j][k], SIGNAL(valueChanged(int)), SLOT(Slider(void)));
+			}
+		}
+		
+		msg_pid.kp.push_back(0);
+		msg_pid.ki.push_back(0);
+		msg_pid.kd.push_back(0);
+		msg_pid.sp.push_back(0);
 	}
-	config_name = ros::package::getPath("tiburon_controller") + "/config/pid.conf";
+	connect(ui->reset, SIGNAL(pressed()), this, SLOT(load()));	
+	connect(ui->save, SIGNAL(pressed()), this, SLOT(save()));	
 	
+	config_name = ros::package::getPath("tiburon_controller") + "/config/pid.conf";
 	load();
-	setLabels();
-	publish_pid();
 }
 
-void MainWindow::print()
-{
-	for (int i = 0; i < 4; i++)
-		cout<<kp[i]<<'\t'<<kd[i]<<'\t'<<ki[i]<<endl;
-}
-
-MainWindow::~MainWindow()
+MainWindow::~MainWindow() 
 {
     delete ui;
 }
@@ -55,13 +46,14 @@ void MainWindow::load()
 	ifstream config(config_name.c_str());
 	for (int i = 0; i < 4; i++)
 	{
-		config>>kp[i];
-		config>>kd[i];
-		config>>ki[i];
+		config>>msg_pid.kp[i];
+		config>>msg_pid.ki[i];
+		config>>msg_pid.kd[i];
+		config>>msg_pid.sp[i];
 	}
 	config.close();
-	print();
-	index_changed();
+	load_slider();
+	setLabels();
 }
 
 void MainWindow::save()
@@ -69,44 +61,32 @@ void MainWindow::save()
 	ofstream config(config_name.c_str());
 	for (int i = 0; i < 4; i++)
 	{
-		config<<kp[i]<<'\n';
-		config<<kd[i]<<'\n';
-		config<<ki[i]<<'\n';
+		config<<msg_pid.kp[i]<<'\n';
+		config<<msg_pid.ki[i]<<'\n';
+		config<<msg_pid.kd[i]<<'\n';
+		config<<msg_pid.sp[i]<<'\n';
 	}
 	config.close();
-	print();
 } 
 
 /////////////////////////////////////////////////////////////
 //////////////////////SLOT FUNCTIONS/////////////////////////
 /////////////////////////////////////////////////////////////
 
-void MainWindow::slider(void)
+void MainWindow::Slider(void)
 {
-	if (!index_changed_flag)
+	if (!isLoading)
 	{
-		kp[index] = ui->hs_kp->value();
-		kd[index] = ui->hs_kd->value();
-		ki[index] = ui->hs_ki->value();
-	
+		for (int i = 0; i < 4; i++)
+		{
+			msg_pid.kp[i] = slider[i][0][0]->value() + (slider[i][0][1]->value() * 1.0) / 1000.0;			
+			msg_pid.ki[i] = slider[i][1][0]->value() + (slider[i][1][1]->value() * 1.0) / 1000.0;			
+			msg_pid.kd[i] = slider[i][2][0]->value() + (slider[i][2][1]->value() * 1.0) / 1000.0;
+			msg_pid.sp[i] = slider[i][3][0]->value() + slider[i][3][1]->value();
+		}
 		setLabels();
-		publish_pid();
-	}	
-}
-
-void MainWindow::index_changed(void)
-{
-	index_changed_flag = true;
-	
-	index = ui->comboBox->currentIndex();
-	ui->hs_kp->setValue(kp[index]);
-	ui->hs_kd->setValue(kd[index]);
-	ui->hs_ki->setValue(ki[index]);
-	
-	index_changed_flag = false;
-	
-	setLabels();
-	publish_pid();
+		pub_pid.publish(msg_pid);
+	}
 }
 
 /////////////////////////////////////////////////////////////
@@ -115,18 +95,34 @@ void MainWindow::index_changed(void)
 
 void MainWindow::setLabels()
 {
-	ui->vkp->setText(QString::number(ui->hs_kp->value() * 1.0 / 100));
-    ui->vkd->setText(QString::number(ui->hs_kd->value() * 1.0 / 100));
-    ui->vki->setText(QString::number(ui->hs_ki->value() * 1.0 / 100));
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			float val = (slider[i][j][0]->value() + (slider[i][j][1]->value() * 1.0) / 1000.0);
+			value[i][j]->setText(QString::number(val));
+		}
+		value[i][3]->setText(QString::number(slider[i][3][0]->value() * 10 + slider[i][3][1]->value())); 
+	}
 }
 
-void MainWindow::publish_pid()
+void MainWindow::load_slider()
 {
-	msg_pid.kp = kp[index];
-    msg_pid.kd = kd[index];
-    msg_pid.ki = ki[index];
-	msg_pid.mode = index;
-	pub_pid.publish(msg_pid);
+	isLoading = true;
+	
+	for(int i = 0; i < 4; i++)
+	{
+		slider[i][0][0]->setValue(int(msg_pid.kp[i]));
+		slider[i][0][0]->setValue(int(msg_pid.ki[i]));
+		slider[i][0][0]->setValue(int(msg_pid.kd[i]));
+		slider[i][0][0]->setValue(msg_pid.sp[i] / 10);
+		
+		slider[i][0][1]->setValue(msg_pid.kp[i] - int(msg_pid.kp[i]) * 1000);
+		slider[i][0][1]->setValue(msg_pid.ki[i] - int(msg_pid.ki[i]) * 1000);
+		slider[i][0][1]->setValue(msg_pid.kd[i] - int(msg_pid.kd[i]) * 1000);
+		slider[i][0][1]->setValue(msg_pid.sp[i] % 10);
+	}
+	isLoading = false;
 }
 
 /////////////////////////////////////////////////////////////
@@ -138,42 +134,42 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 	string str = "";
 	if (event->key() == Qt::Key_W)
 	{
-		ui->myLabel->setText("Key Pressed: W");
+		ui->teleop->setText("Key Pressed: W");
 		str += 'W';
 	}
 	if (event->key() == Qt::Key_S)
 	{
-		ui->myLabel->setText("Key Pressed: S");
+		ui->teleop->setText("Key Pressed: S");
 		str += 'S';
 	}
 	if (event->key() == Qt::Key_A)
 	{
-		ui->myLabel->setText("Key Pressed: A");
+		ui->teleop->setText("Key Pressed: A");
 		str += 'A';
 	}
 	if (event->key() == Qt::Key_D)
 	{
-		ui->myLabel->setText("Key Pressed: D");
+		ui->teleop->setText("Key Pressed: D");
 		str += 'D';
 	}
 	if (event->key() == Qt::Key_Q)
 	{
-		ui->myLabel->setText("Key Pressed: Q");
+		ui->teleop->setText("Key Pressed: Q");
 		str += 'Q';
 	}
 	if (event->key() == Qt::Key_E)
 	{
-		ui->myLabel->setText("Key Pressed: E");
+		ui->teleop->setText("Key Pressed: E");
 		str += 'E';
 	}
 	if (event->key() == Qt::Key_Z)
 	{
-		ui->myLabel->setText("Key Pressed: Z");
+		ui->teleop->setText("Key Pressed: Z");
 		str += 'Z';
 	}
 	if (event->key() == Qt::Key_X)
 	{
-		ui->myLabel->setText("Key Pressed: X");
+		ui->teleop->setText("Key Pressed: X");
 		str += 'X';
 	}
 
@@ -185,7 +181,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
  
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
-	ui->myLabel->setText("No Key Pressed");
+	ui->teleop->setText("No Key Pressed");
 	std_msgs::String msg;
 	msg.data = "_";
 	

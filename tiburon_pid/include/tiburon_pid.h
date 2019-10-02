@@ -34,7 +34,7 @@ private:
 
 	float Forces[6];
 	float balance[4];
-	int16_t thrust[2];
+	int16_t thrust[4];
 };
 
 #endif

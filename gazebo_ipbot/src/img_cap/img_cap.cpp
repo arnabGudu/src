@@ -103,7 +103,7 @@ void image::perform()
 		min[i] = minAreaRect(contours[i]);
 	}
 
-	//draw minAreaRect
+	//draw minAreaRect 
 	for (int i = 0; i < contours.size(); i++)
 	{
 		Point2f rect_points[4];
