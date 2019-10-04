@@ -65,13 +65,18 @@ void Print(int16_t arr[])
 	cout<<endl;
 }
 
-void pid::print()
+void pid::print(float error, int i)
 {
-	cout<<"yS:"<<setpoint[YAW]<<"  yM:"<<measure[YAW]<<"  yErr:";
-	//cout<<"  dS:"<<setpoint[DEPTH]<<"  dM:"<<measure[DEPTH]<<"  dErr:"<<setpoint[DEPTH] - measure[DEPTH];
-	//cout<<endl;
+	if (i == 0)			cout<<"ROLL";
+	else if (i == 1)	cout<<"PITCH";
+	else if (i == 2)	cout<<"YAW";
+	else if (i == 3)	cout<<"HEAVE";
+	
+	if (i != 3)
+		cout<<"\tset: "<<setpoint[i]<<"\t\tm: "<<measure[i]<<"\t\terr: "<<error<<endl;	
+	else
+		cout<<"\tset: "<<setpoint[i]<<"\tm: "<<measure[i]<<"\t\terr: "<<error<<endl;	
 }
-
 ///////////////////////////////////////////////////////////////////
 ///////////////////CALLBACK FUNCTIONS//////////////////////////////
 ///////////////////////////////////////////////////////////////////
@@ -138,6 +143,19 @@ void pid::callback_key(const std_msgs::String::ConstPtr &msg)
 	else if (!str.find('E'))
 		thrust[SWAY] = 1600;
 
+	else if (!str.find('Z')) 
+	{
+		setpoint[HEAVE]--;
+		if (setpoint[HEAVE] < 837)
+			setpoint[HEAVE] = 837;
+	}
+
+	else if (!str.find('X'))
+	{
+		setpoint[HEAVE]++;
+	}
+	
+	/*
 	else if (!str.find('Z'))
 	{
 		thrust[HEAVE] = 1650;
@@ -148,7 +166,7 @@ void pid::callback_key(const std_msgs::String::ConstPtr &msg)
 	{
 		thrust[HEAVE] = 1500;
 		setpoint[HEAVE] = measure[HEAVE];	
-	}
+	}*/
 
 	else if (!str.find('_'))
 	{
@@ -165,7 +183,7 @@ void pid::callback_pid(const tiburon_controller::pid_tuning::ConstPtr &msg)
 		kp[i] = msg->kp[i];
 		kd[i] = msg->kd[i];
 		ki[i] = msg->ki[i];
-		thrust[i] = msg->sp[i];
+		//thrust[i] = msg->sp[i];
 	}
 }
 
@@ -185,9 +203,9 @@ void pid::pid_control()
 				error = error - 360;
 			else if (error < -180)
 				error = error + 360;
-			
-			cout<<"set: "<<setpoint[i]<<"  meas: "<<measure[i]<<"  err: "<<error;
+			 
 		}
+		print(error, i);
 		float diff = error - lastError[i];
 		
 		intg[i] += error;
@@ -200,13 +218,8 @@ void pid::pid_control()
 		lastError[i] = error;	
 		
 		balance[i] = kp[i] * error + ki[i] * intg[i] + kd[i] * diff;
-		
 	}
-
-	//print(); 
-	//Print(balance);
-	//Print(setpoint);
-	//Print(thrust);
+	cout<<endl;
 }
 
 	
@@ -219,7 +232,7 @@ void pid::thruster_speed()
 	Forces[3] = thrust[LEFT] + balance[YAW];
 	Forces[4] = thrust[RIGHT] - balance[YAW];
 	
-	cout<<"  balTh: "<<balance[YAW]<<endl;
+	//cout<<"  balTh: "<<balance[YAW]<<endl;
 	Forces[5] = thrust[SWAY];
 	
 	for (int i = 0; i < 6; i++)

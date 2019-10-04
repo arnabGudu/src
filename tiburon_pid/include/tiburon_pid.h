@@ -26,7 +26,7 @@ private:
 	
 	void pid_control();
 	void thruster_speed();
-	void print();
+	void print(float error, int i);
 
 	float kp[4], kd[4], ki[4];
 	float measure[4], setpoint[4];

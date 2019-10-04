@@ -20,7 +20,7 @@ pid::pid(ros::NodeHandle _nh) : nh(_nh)
 	for(int i = 0; i < 6; i++)
 		msg_speed.data.push_back(0);
 }
-
+/*
 void pid::print()
 {
 	cout<<"measure: "<<measure[0];
@@ -28,7 +28,7 @@ void pid::print()
 	cout<<" bal: "<<balance[0];
 	cout<<" force:"<<Forces[0]<<","<<Forces[1]<<","<<Forces[2];
 	cout<<endl;
-}
+}*/
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////CALLBACK FUNCTIONS//////////////////////////////
@@ -109,5 +109,5 @@ void pid::thruster_speed()
 		msg_speed.data[i] = Forces[i];
 
 	pub.publish(msg_speed);
-	print();
+	//print();
 }

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+using namespace std;
+
 MainWindow::MainWindow(ros::NodeHandle _nh, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow), nh(_nh)
@@ -82,7 +84,7 @@ void MainWindow::Slider(void)
 			msg_pid.kp[i] = slider[i][0][0]->value() + (slider[i][0][1]->value() * 1.0) / 1000.0;			
 			msg_pid.ki[i] = slider[i][1][0]->value() + (slider[i][1][1]->value() * 1.0) / 1000.0;			
 			msg_pid.kd[i] = slider[i][2][0]->value() + (slider[i][2][1]->value() * 1.0) / 1000.0;
-			msg_pid.sp[i] = slider[i][3][0]->value() + slider[i][3][1]->value();
+			msg_pid.sp[i] = slider[i][3][0]->value() * 10 + slider[i][3][1]->value();
 		}
 		setLabels();
 		pub_pid.publish(msg_pid);
@@ -113,14 +115,14 @@ void MainWindow::load_slider()
 	for(int i = 0; i < 4; i++)
 	{
 		slider[i][0][0]->setValue(int(msg_pid.kp[i]));
-		slider[i][0][0]->setValue(int(msg_pid.ki[i]));
-		slider[i][0][0]->setValue(int(msg_pid.kd[i]));
-		slider[i][0][0]->setValue(msg_pid.sp[i] / 10);
+		slider[i][1][0]->setValue(int(msg_pid.ki[i]));
+		slider[i][2][0]->setValue(int(msg_pid.kd[i]));
+		slider[i][3][0]->setValue(msg_pid.sp[i] / 10);
 		
-		slider[i][0][1]->setValue(msg_pid.kp[i] - int(msg_pid.kp[i]) * 1000);
-		slider[i][0][1]->setValue(msg_pid.ki[i] - int(msg_pid.ki[i]) * 1000);
-		slider[i][0][1]->setValue(msg_pid.kd[i] - int(msg_pid.kd[i]) * 1000);
-		slider[i][0][1]->setValue(msg_pid.sp[i] % 10);
+		slider[i][0][1]->setValue((msg_pid.kp[i] - int(msg_pid.kp[i])) * 1000);
+		slider[i][1][1]->setValue((msg_pid.ki[i] - int(msg_pid.ki[i])) * 1000);
+		slider[i][2][1]->setValue((msg_pid.kd[i] - int(msg_pid.kd[i])) * 1000);
+		slider[i][3][1]->setValue(msg_pid.sp[i] % 10);
 	}
 	isLoading = false;
 }
