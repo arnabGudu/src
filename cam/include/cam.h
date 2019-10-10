@@ -23,6 +23,7 @@ private:
 	Mat src;
 	
 	void show();
+	void video();
 };
 
 #endif
