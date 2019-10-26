@@ -56,6 +56,7 @@ void MainWindow::load()
 	config.close();
 	load_slider();
 	setLabels();
+	Slider();
 }
 
 void MainWindow::save()

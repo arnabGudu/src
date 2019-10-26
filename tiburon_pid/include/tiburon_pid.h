@@ -6,7 +6,19 @@
 #include <synchronizer/Combined.h>
 #include <thruster_controller/ThrusterSpeeds.h>
 #include "tiburon_controller/pid_tuning.h"
-#include <geometry_msgs/Vector3.h>
+#include <tiburon_pid/rqt.h>
+
+#define ROLL 0
+#define PITCH 1
+
+#define LEFT 0
+#define RIGHT 1
+#define SWAY 2
+
+#define HEAVE 3
+#define YAW 2
+
+#define tMin 0.01
 
 using namespace std;
 

@@ -10,17 +10,27 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
 )
 
+add_message_files(
+  FILES
+  rqt.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(CATKIN_DEPENDS message_runtime std_msgs)
  
 include_directories(include)
-
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(pid_lib include/tiburon_pid.h src/tiburon_pid.cpp)
+add_library(pid_lib include/tiburon_pid.h src/ros.cpp src/pid.cpp) 
 add_executable( pid src/main.cpp)
 target_link_libraries(pid pid_lib ${catkin_LIBRARIES} )
+add_dependencies(pid_lib ${PROJECT_NAME}_generate_messages_cpp)
 
 add_library(pid_test_lib include/tiburon_pid.h src/Tests/tiburon_pid_test.cpp)
 add_executable( pid_test src/main.cpp)
