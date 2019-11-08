@@ -1,5 +1,0 @@
-int thresh_l_R = 68, thresh_l_G = 116, thresh_h_R = 134;
-int thresh_l_B = 0, thresh_h_B = 24, thresh_h_G = 255;
-
-int canny_low_thresh = 100, canny_ratio = 2, canny_kernel_size = 3;
-int erode_size = 1;
